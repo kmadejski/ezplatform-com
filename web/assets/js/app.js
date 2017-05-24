@@ -23,7 +23,7 @@ $(document).ready(function(){
        var $button = $(this);
        var $parent = $(this).parent();
 
-       $(this).hide();
+       $button.hide();
        $parent.append('<div class="button-load-progress"></div>').fadeIn();
 
         $.ajax({
