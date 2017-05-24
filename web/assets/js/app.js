@@ -19,12 +19,12 @@ $(document).ready(function(){
     $("button.load-more").on('click', function() {
        var url = $(this).data('url');
        var page = $(this).data('page');
-       var $last = $(this).parent().parent().prev().children().last();
+       var $container = $('.' + $(this).data('target'));
        var $button = $(this);
        var $parent = $(this).parent();
 
        $button.hide();
-       $parent.append('<div class="button-load-progress"></div>').fadeIn();
+       $parent.append('<div class="button-load-more-progress"></div>').fadeIn();
 
         $.ajax({
             type: 'POST',
@@ -35,14 +35,14 @@ $(document).ready(function(){
                     $button.parent().empty().hide();
                 }
                 $button.data('page', page + 1);
-                $(data.html).hide().insertAfter($last).fadeIn('slow');
+                $container.append(data.html);
                 $parent.find('div').remove();
                 $button.show();
             },
             error: function() {
                 $button.hide();
                 $parent.find('div').remove();
-                $parent.addClass('button-load-error').append('Oh no, something went terribly wrong :-(');
+                $parent.addClass('button-load-more-error').append('Oh no, something went terribly wrong :-(');
             }
         })
     });

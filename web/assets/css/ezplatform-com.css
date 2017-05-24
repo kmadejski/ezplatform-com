@@ -293,7 +293,7 @@ footer .footer-social i.fa {
     color: #fff;
 }
 
-.button-load-progress {
+.button-load-more-progress {
     width: 48px;
     height: 48px;
     margin: auto;
@@ -311,7 +311,7 @@ footer .footer-social i.fa {
     }
 }
 
-.button-load-error {
+.button-load-more-error {
     text-align: center;
     font-size: 17px;
     color: #c34111;
