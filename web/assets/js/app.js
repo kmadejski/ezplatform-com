@@ -19,7 +19,7 @@ $(document).ready(function(){
     $("button.load-more").on('click', function() {
        var url = $(this).data('url');
        var page = $(this).data('page');
-       var $container = $('.' + $(this).data('target'));
+       var $container = $($(this).data('target'));
        var $button = $(this);
        var $parent = $(this).parent();
 
