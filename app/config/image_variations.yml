@@ -25,3 +25,4 @@ liip_imagine:
     filter_sets:
         blog_thumbnail:
             png_compression_level: 9
+            jpeg_quality: 90
