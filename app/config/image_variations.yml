@@ -21,8 +21,17 @@ ezpublish:
                     filters:
                         - { name: geometry/scalewidthdownonly, params: [710] }
 liip_imagine:
-    driver: imagick
+    driver: imagic
     filter_sets:
         blog_thumbnail:
-            png_compression_level: 9
-            jpeg_quality: 90
+            png_compression_level: '%images.default_png_compression_level%'
+            jpeg_quality: '%images.default_jpeg_quality%'
+        blog_author:
+            png_compression_level: '%images.default_png_compression_level%'
+            jpeg_quality: '%images.default_jpeg_quality%'
+        blog_post_author:
+            png_compression_level: '%images.default_png_compression_level%'
+            jpeg_quality: '%images.default_jpeg_quality%'
+        blog_thumbnail:
+            png_compression_level: '%images.default_png_compression_level%'
+            jpeg_quality: '%images.default_jpeg_quality%'
