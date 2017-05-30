@@ -20,3 +20,8 @@ ezpublish:
                     reference: ~
                     filters:
                         - { name: geometry/scalewidthdownonly, params: [710] }
+liip_imagine:
+    driver: gd
+    filter_sets:
+        blog_thumbnail:
+            png_compression_level: 9
