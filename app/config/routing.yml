@@ -48,8 +48,10 @@ _ezplatform_bundles_list_ajax:
     requirements:
         "page": "\d+"
 _ezplatform_tag_related_list_ajax:
-    path: /ezplatform/tag/{tagId}/related/page/{page}
-    defaults: { _controller: app.controller.tag:getTagRelatedContent }
+    path: /ezplatform/tag/{tagId}/related/{page}
+    defaults:
+        _controller: eztags.controller.tag_view:viewAction
+        route: eztags_tag_url
     methods: [GET]
     requirements:
         "tagId": "\d+"

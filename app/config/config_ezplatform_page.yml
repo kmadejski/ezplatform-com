@@ -27,6 +27,8 @@ parameters:
     bundles.excluded_maintainers: ['ezrobot']
     # overwrites default tag view page template
     eztags.default.tag_view.pagelayout: 'pagelayout.html.twig'
+    # template to display AJAX loaded related content list
+    eztags.default.tag_view.ajax_pagelayout: 'pagelayout_ajax.html.twig'
     # overwrites default tag related content limit
     eztags.default.tag_view.related_content_list.limit: 10
 

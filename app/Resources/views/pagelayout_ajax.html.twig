@@ -1,0 +1,13 @@
+{% if related_content|length > 0 %}
+    {% for related_content_item in related_content %}
+        {{ render(
+            controller(
+                "ez_content:viewAction", {
+                    "contentId": related_content_item.id,
+                    "locationId": related_content_item.mainLocationId,
+                    "viewType": "line"
+                }
+            )
+        ) }}
+    {% endfor %}
+{% endif %}
