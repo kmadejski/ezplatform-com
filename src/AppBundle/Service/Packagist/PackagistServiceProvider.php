@@ -20,19 +20,9 @@ class PackagistServiceProvider implements PackagistServiceProviderInterface
     const GITHUB_AVATAR_BASE_URL = "https://avatars2.githubusercontent.com/";
 
     /**
-     * @var \Tedivm\StashBundle\Service\CacheService
-     */
-    private $cache;
-
-    /**
      * @var \Packagist\Api\Client
      */
     private $packagistClient;
-
-    /**
-     * @var int
-     */
-    private $cacheExpirationTime;
 
     /**
      * @var array
@@ -40,14 +30,10 @@ class PackagistServiceProvider implements PackagistServiceProviderInterface
     private $excludedMaintainers;
 
     public function __construct(
-        CacheService $cacheService,
         Client $packagistClient,
-        $cacheExpirationTime,
         $excludedMaintainers
     ) {
-        $this->cache = $cacheService;
         $this->packagistClient = $packagistClient;
-        $this->cacheExpirationTime = $cacheExpirationTime;
         $this->excludedMaintainers = $excludedMaintainers;
     }
 
@@ -59,14 +45,8 @@ class PackagistServiceProvider implements PackagistServiceProviderInterface
     {
         try {
             $packageName = trim($packageName);
-            $item = $this->cache->getItem($packageName);
-            if ($item->isMiss()) {
-                $packageDetails = $this->callApi($packageName);
-                $item->expiresAfter($this->cacheExpirationTime);
-                $this->cache->save($item->set($packageDetails));
-                return $packageDetails;
-            }
-            return $item->get();
+            $packageDetails = $this->callApi($packageName);
+            return $packageDetails;
         } catch (CurlException $curlException) {
             return [];
         }
@@ -81,6 +61,11 @@ class PackagistServiceProvider implements PackagistServiceProviderInterface
         $externalData = $this->packagistClient->get($packageName);
         $packageDetails['maintainers'] = $this->excludeMaintainers($externalData->getMaintainers());
         $packageDetails['authorAvatarUrl'] = $this->getAuthorAvatarUrl($externalData->getRepository());
+        $packageDetails['downloads'] = $externalData->getDownloads()->getTotal();
+        // current Packagist API don't provide methods to fetch fields listed below
+        $packageDetails['forks'] = 0;
+        $packageDetails['stars'] = 0;
+        //
         $versions = $externalData->getVersions();
         if (is_array($versions) && !empty($versions)) {
             if (isset($versions['dev-master'])) {
@@ -88,7 +73,7 @@ class PackagistServiceProvider implements PackagistServiceProviderInterface
             } else {
                 $version = key($versions);
             }
-            $packageDetails['updated'] = $versions[$version]->getTime();
+            $packageDetails['updated'] = \DateTime::createFromFormat(\DateTime::ISO8601, $versions[$version]->getTime());
             $packageDetails['author'] = $versions[$version]->getAuthors();
         }
         return $packageDetails;
