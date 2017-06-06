@@ -23,15 +23,12 @@ ezpublish:
 liip_imagine:
     driver: imagic
     filter_sets:
-        blog_thumbnail:
+        blog_thumbnail: &default
             png_compression_level: '%images.default_png_compression_level%'
             jpeg_quality: '%images.default_jpeg_quality%'
         blog_author:
-            png_compression_level: '%images.default_png_compression_level%'
-            jpeg_quality: '%images.default_jpeg_quality%'
+            *default
         blog_post_author:
-            png_compression_level: '%images.default_png_compression_level%'
-            jpeg_quality: '%images.default_jpeg_quality%'
+            *default
         blog_thumbnail:
-            png_compression_level: '%images.default_png_compression_level%'
-            jpeg_quality: '%images.default_jpeg_quality%'
+            *default
