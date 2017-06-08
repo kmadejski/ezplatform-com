@@ -1,0 +1,46 @@
+version: '2'
+# compose file for installing composer packages, perfrom install and dump database
+
+services:
+  install_db:
+    image: ${MYSQL_IMAGE}
+    volumes:
+     - ${COMPOSE_DIR}/entrypoint/mysql:/docker-entrypoint-initdb.d/:ro
+    environment:
+     - MYSQL_RANDOM_ROOT_PASSWORD=1
+     - MYSQL_USER=$DATABASE_USER
+     - MYSQL_PASSWORD=$DATABASE_PASSWORD
+     - MYSQL_DATABASE=$DATABASE_NAME
+
+  install_app:
+    image: ${PHP_IMAGE_DEV}
+    volumes:
+     - ${COMPOSE_DIR}/../..:/var/www
+     - ${COMPOSER_HOME}:/root/.composer
+    depends_on:
+     - install_db
+    environment:
+     - SYMFONY_ENV
+     - SYMFONY_DEBUG
+     - DATABASE_USER
+     - DATABASE_PASSWORD
+     - DATABASE_NAME
+     - DATABASE_HOST=install_db
+    # Dumping autoload using --optimize-autoloader to keep performenace on a usable level, not needed on linux host.
+    # Second chown line:  For dev and behat tests we give a bit extra rights, never do this for prod.
+
+    # bzip2 installation is temporary until be added to ${PHP_IMAGE_DEV}
+    command: >
+      /bin/sh -c "
+      apt-get update && apt-get install bzip2;
+      composer install --no-progress --no-interaction --prefer-dist --no-suggest --optimize-autoloader;
+      mkdir -p web/var;
+      php /scripts/wait_for_db.php;
+      php app/console ezplatform:install app;
+      rm -Rf app/logs/* app/cache/*/*;
+      chown -R www-data:www-data app/cache app/logs web/var;
+      find app/cache app/logs web/var -type d | xargs -0 -I directory chmod -R 775 "directory"
+      find app/cache app/logs web/var -type f | xargs -0 -I file chmod -R 664 "file";
+      chown -R www-data:www-data app/config src;
+      echo 'Dumping database into doc/docker-compose/entrypoint/mysql/2_dump.sql for use by mysql on startup.';
+      mysqldump -u $$DATABASE_USER --password=$$DATABASE_PASSWORD -h $$DATABASE_HOST --add-drop-table --extended-insert  --protocol=tcp $$DATABASE_NAME > doc/docker-compose/entrypoint/mysql/2_dump.sql"
