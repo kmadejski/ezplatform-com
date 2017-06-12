@@ -114,6 +114,30 @@ docker-compose exec --user www-data app sh -c "php /scripts/wait_for_db.php; php
 docker-compose exec --user www-data app app/console ezplatform:install clean
 ```
 
+### ezplatform.com installation
+Warning: *Dev setup works a lot faster on Linux then on Windows/Mac where Docker uses virtual machines using shared folders
+by default under the hood, which leads to much slower IO performance.*
+
+From root of your projects clone of this distribution, [setup composer auth.json](#composer) and execute the following for production "image" use:
+```
+#export COMPOSE_FILE=doc/docker-compose/base-prod.yml SYMFONY_ENV=prod
+```
+or for development "image" use:
+```
+export COMPOSE_FILE=doc/docker-compose/base-dev.yml SYMFONY_ENV=dev
+```
+
+```sh
+# Optional: If you use Docker Machine with NFS, you'll need to specify where project is, & give composer a valid directory.
+#export COMPOSE_DIR=/data/SOURCES/MYPROJECTS/ezplatform/doc/docker-compose COMPOSER_HOME=/tmp
+
+# First time: Install setup, and generate database dump:
+docker-compose -f doc/docker-compose/ezplatform-com_install.yml up --abort-on-container-exit
+
+# Boot up full setup:
+docker-compose up -d --force-recreate
+```
+
 ## Further info
 
 ### <a name="composer"></a>Configuring Composer
