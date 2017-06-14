@@ -6,14 +6,78 @@
             <div class="container">
                 <div class="row">
                     <div class="col-xs-12">
-                        {{ ez_render_field(content, 'description') }}
+                        <h1>{{ ez_render_field(content, 'name') }}</h1>
+                        <h2>{{ ez_render_field(content, 'description') }}</h2>
                     </div>
+                </div>
+            </div>
+        </div>
+        <div class="bundles-list-search">
+            <div class="container">
+                <div class="col-xs-12 col-sm-10">
+                    <form>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="bundles-list-search-query" placeholder="Search Bundle...">
+                            <div class="input-group-addon">
+                                <button type="submit" class="btn bundles-list-search-button">
+                                    <i class="fa fa-search" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-xs-12 col-sm-2 text-right">
+                    <button class="btn bundles-list-add-bundle">
+                        Add Bundle
+                    </button>
                 </div>
             </div>
         </div>
         <div class="bundles-list-content">
             <div class="container">
-                <div class="col-xs-12 bundles-list-container">
+                <div class="col-xs-2 bundle-list-settings">
+                    <h2>Categories</h2>
+                    <ul class="bundle-list-settings-list">
+                        <li class="active"><a href="#">All Bundles</a></li>
+                        <li><a href="#">Content Type</a></li>
+                        <li><a href="#">Field Type</a></li>
+                        <li><a href="#">Theme</a></li>
+                        <li><a href="#">Social</a></li>
+                        <li><a href="#">e-Commerce</a></li>
+                        <li><a href="#">Administration</a></li>
+                        <li><a href="#">Workflow</a></li>
+                    </ul>
+                    <h2>Compatibility</h2>
+                    <ul class="bundle-list-settings-list platform-version">
+                        <div>
+                            <input type="checkbox" id="compatibility-v1" name="compatibility-v1" checked="checked">
+                            <label for="compatibility-v1">
+                                <div><i class="fa fa-check"></i></div> eZ Platform v1
+                            </label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="compatibility-v2" name="compatibility-v2">
+                            <label for="compatibility-v2">
+                                <div><i class="fa fa-check"></i></div> eZ Platform v2
+                            </label>
+                        </div>
+                    </ul>
+                </div>
+                <div class="col-xs-10 bundles-list-container">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-8 col-md-9">
+                            <h2>All Bundles</h2>
+                        </div>
+                        <div class="col-xs-12 col-sm-4 col-md-3 sort-container">
+                            <div class="form-group">
+                                <select class="form-control">
+                                    <option>Sort by</option>
+                                    <option>Downloads (ascending)</option>
+                                    <option>Downloads (descending)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
                 {% include 'parts/bundle_list/list.html.twig' with {
                     'items': items,
                     'viewType': 'line',
