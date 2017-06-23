@@ -3,9 +3,7 @@
         <div class="bundle-card-line-data">
             <div class="bundle-card-line-information">
                 <h1>
-                    <a href="https://packagist.org/packages/{{ ez_field_value(content, 'bundle_id') }}">
-                        {{ ez_field_value(content, 'bundle_id') }}
-                    </a>
+                    {{ ez_render_field(content, 'packagist_url') }}
                 </h1>
                 <div class="bundle-card-line-description">
                     {{ ez_render_field(content, 'description') }}
@@ -52,7 +50,7 @@
                     {% endfor %}
                     {% if packageDetails.maintainers|length > 3 %}
                         <div class="bundle-card-line-contributors-more">
-                            <a href="https://packagist.org/packages/{{ ez_field_value(content, 'bundle_id') }}" title="See on Packagist.org">+{{ packageDetails.maintainers|length - 3 }} more</a>
+                            <a href="{{ ez_field_value(content, 'packagist_url') }}" title="See on Packagist.org">+{{ packageDetails.maintainers|length - 3 }} more</a>
                         </div>
                     {% endif %}
                 </div>
@@ -60,7 +58,7 @@
             </div>
         </div>
         <div class="bundle-card-line-href">
-            <a href="https://packagist.org/packages/{{ ez_field_value(content, 'bundle_id') }}" title="See on Packagist.org"><i class="fa fa-angle-right fa-3" aria-hidden="true"></i></a>
+            <a href="{{ ez_field_value(content, 'packagist_url') }}" title="See on Packagist.org"><i class="fa fa-angle-right fa-3" aria-hidden="true"></i></a>
         </div>
     </div>
 </div>
