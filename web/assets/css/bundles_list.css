@@ -61,41 +61,6 @@
     padding-left: 10px;
 }
 
-.bundle-list-settings-list.platform-version input[type="checkbox"] {
-    display:none;
-}
-
-.bundle-list-settings-list.platform-version label div {
-    width: 20px;
-    height: 20px;
-    display: inline-block;
-    border: 2px solid #d3d3d3;
-    text-align: center;
-    line-height: 16px;
-    margin-right: 6px;
-    border-radius: 3px;
-    cursor: pointer;
-    background: #fff;
-}
-
-.bundle-list-settings-list.platform-version label {
-    font-weight: 600;
-}
-
-.bundle-list-settings-list.platform-version label i {
-    font-size: 16px;
-    opacity: 0;
-    color: #f15a22;
-}
-
-.bundle-list-settings-list.platform-version label:hover {
-    cursor: pointer;
-}
-
-.bundle-list-settings-list.platform-version input:checked+label i {
-    opacity: 1;
-}
-
 .bundles-list-container h2 {
     font-size: 21px;
 }
