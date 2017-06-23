@@ -33,6 +33,8 @@
     color: #63605d;
     text-decoration: none;
     cursor: pointer;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
 }
 
 .bundle-card-line-description {
