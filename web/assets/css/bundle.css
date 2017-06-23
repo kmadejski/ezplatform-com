@@ -29,6 +29,12 @@
     font-weight: 400;
 }
 
+.bundle-card-line-information h1 a {
+    color: #63605d;
+    text-decoration: none;
+    cursor: pointer;
+}
+
 .bundle-card-line-description {
     font-size: 15px;
     color: #63605d;
@@ -65,7 +71,7 @@
 }
 
 .bundle-card-line-counters ul li i {
-    color: #f15a22;
+    color: #2a9dc7;
     width: 25px;
     text-align: center;
     font-size: 18px;
@@ -155,4 +161,96 @@
 
 .bundle-card-line-href a:hover {
     background: #f15a22;
+}
+
+@media (max-width: 1200px) {
+    .bundle-card-line-maintainer {
+        margin: 0 4px;
+    }
+}
+
+@media (max-width: 992px) {
+    .bundle-card-line {
+        border-left: none;
+        border-bottom: 15px solid #2a9dc7;
+        height: auto;
+    }
+
+    .bundle-card-line-data {
+        width: 100%;
+    }
+
+    .bundle-card-line-information {
+        width: 100%;
+        min-height: unset;
+        border-right: none;
+        padding: 0 20px;
+    }
+
+    .bundle-card-line-counters {
+        width: 100%;
+    }
+
+    .bundle-card-line-counters ul {
+        padding: 10px 20px;
+    }
+
+    .bundle-card-line-counters ul li {
+        border-bottom: none;
+        border-top: 1px solid #d3d3d3;
+    }
+
+    .bundle-card-line-counters ul li:last-of-type {
+        border-bottom: 1px solid #d3d3d3;;
+    }
+
+    .bundle-card-line-authors {
+        border-top: none;
+        padding: 10px 20px;
+    }
+
+    .bundle-card-line-owner {
+        border-right: none;
+        padding: 0;
+    }
+
+    .bundle-card-line-owner-name {
+        display: none;
+    }
+
+    .bundle-card-line-maintainers {
+        padding-right: 0px;
+    }
+
+    .bundle-card-line-maintainer {
+        margin: 0 5px 0 5px;
+    }
+
+    .bundle-card-line-maintainer:first-of-type {
+        margin-left: 10px;
+    }
+
+    .bundle-card-line-maintainer-username {
+        display: none;
+    }
+
+    .bundle-card-line-href {
+        display: none;
+    }
+}
+
+@media (max-width: 475px) {
+    .bundles-list-header {
+        height: auto;
+        padding: 15px 0;
+    }
+
+    .bundle-card-line-owner {
+        width: 100%;
+    }
+
+    .bundle-card-line-maintainers {
+        width: 100%;
+        padding: 0;
+    }
 }
