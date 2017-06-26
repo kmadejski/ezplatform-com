@@ -7,13 +7,12 @@ use AppBundle\QueryType\BundlesQueryType;
 use AppBundle\Service\Packagist\PackagistServiceProviderInterface;
 use eZ\Publish\API\Repository\SearchService;
 use eZ\Publish\API\Repository\Values\Content\Query;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class BundleController extends Controller
+class BundleController
 {
     /**
      * @var \Symfony\Bundle\TwigBundle\TwigEngine
