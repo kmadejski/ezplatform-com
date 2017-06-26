@@ -33,13 +33,11 @@
                             <h2>All Bundles</h2>
                         </div>
                         <div class="col-xs-12 col-md-3 sort-container">
-                            <div class="form-group">
-                                <select class="form-control">
-                                    <option>Sort by</option>
-                                    <option>Downloads (ascending)</option>
-                                    <option>Downloads (descending)</option>
-                                </select>
+                            {{ form_start(form) }}
+                            <div class="form-group {% if not form.order.vars.valid %}has-error{% endif %}">
+                                {{  form_row(form.order) }}
                             </div>
+                            {{ form_end(form) }}
                         </div>
                     </div>
                 {% include 'parts/bundle_list/list.html.twig' with {

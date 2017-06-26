@@ -19,6 +19,12 @@ $(document).ready(function(){
     $("button.load-more").on('click', function() {
        var url = $(this).data('url');
        var page = $(this).data('page');
+       var order = $("#order_order").val();
+
+       if (order === undefined || order === '') {
+           order = 'default';
+       }
+
        var $container = $($(this).data('target'));
        var $button = $(this);
        var $parent = $(this).parent();
@@ -26,9 +32,11 @@ $(document).ready(function(){
        $button.hide();
        $parent.append('<div class="button-load-more-progress"></div>').fadeIn();
 
+       url = url + '/' + page + '/' + order;
+
         $.ajax({
             type: 'GET',
-            url: url + '/' + page,
+            url: url,
             dataType: 'json',
             success: function(data) {
                 if (false === data.showLoadMoreButton) {
@@ -45,5 +53,9 @@ $(document).ready(function(){
                 $parent.addClass('button-load-more-error').append('Oh no, something went terribly wrong :-(');
             }
         })
+    });
+
+    $("#sort-order select").change(function() {
+        this.form.submit();
     });
 });
