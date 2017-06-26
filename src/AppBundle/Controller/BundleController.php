@@ -2,14 +2,18 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Form\OrderType;
 use AppBundle\QueryType\BundlesQueryType;
 use AppBundle\Service\Packagist\PackagistServiceProviderInterface;
 use eZ\Publish\API\Repository\SearchService;
 use eZ\Publish\API\Repository\Values\Content\Query;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\FormFactory;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class BundleController
+class BundleController extends Controller
 {
     /**
      * @var \Symfony\Bundle\TwigBundle\TwigEngine
@@ -32,6 +36,11 @@ class BundleController
     private $packagistServiceProvider;
 
     /**
+     * @var \Symfony\Component\Form\FormFactory
+     */
+    private $formFactory;
+
+    /**
      * @var int
      */
     private $bundlesListLocationId;
@@ -47,6 +56,7 @@ class BundleController
      * @param SearchService $searchService
      * @param BundlesQueryType $bundlesQueryType
      * @param PackagistServiceProviderInterface $packagistServiceProvider
+     * @param FormFactory $formFactory
      * @param int $bundlesListLocationId
      * @param int $bundlesListCardsLimit
      */
@@ -55,6 +65,7 @@ class BundleController
         SearchService $searchService,
         BundlesQueryType $bundlesQueryType,
         PackagistServiceProviderInterface $packagistServiceProvider,
+        FormFactory $formFactory,
         $bundlesListLocationId,
         $bundlesListCardsLimit
     )
@@ -63,6 +74,7 @@ class BundleController
         $this->searchService = $searchService;
         $this->bundlesQueryType = $bundlesQueryType;
         $this->packagistServiceProvider = $packagistServiceProvider;
+        $this->formFactory = $formFactory;
         $this->bundlesListLocationId = $bundlesListLocationId;
         $this->bundlesListCardsLimit = $bundlesListCardsLimit;
     }
@@ -72,9 +84,18 @@ class BundleController
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function showBundlesListAction()
+    public function showBundlesListAction(Request $request)
     {
-        $searchResults = $this->getLocations();
+        $form = $this->formFactory->create(OrderType::class);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $order = $form->get('order')->getData();
+        }
+        else {
+            $order = null;
+        }
+        $searchResults = $this->getLocations(0, $order);
         $query = new Query();
         $criterion = new Query\Criterion\LocationId($this->bundlesListLocationId);
         $query->filter = $criterion;
@@ -90,6 +111,7 @@ class BundleController
                 'totalCount' => $searchResults->totalCount,
                 'page' => 1,
             ],
+            'form' => $form->createView()
         ]);
     }
 
@@ -99,10 +121,10 @@ class BundleController
      * @param $page
      * @return JsonResponse
      */
-    public function getBundlesListAction($page)
+    public function getBundlesListAction($page, $order = null)
     {
         $offset = $page * $this->bundlesListCardsLimit - $this->bundlesListCardsLimit;
-        $searchResults = $searchResults = $this->getLocations($offset);
+        $searchResults = $searchResults = $this->getLocations($offset, $order);
         $bundles = $this->getList($searchResults);
 
         $renderedContent = $this->templating->render('parts/bundle_list/list.html.twig', [
@@ -128,12 +150,15 @@ class BundleController
      * @param int $offset
      * @return \eZ\Publish\API\Repository\Values\Content\Search\SearchResult
      */
-    private function getLocations($offset = 0)
+    private function getLocations($offset = 0, $order = null)
     {
+
+
         $query = $this->bundlesQueryType->getQuery([
             'parent_location_id' => $this->bundlesListLocationId,
             'limit' => $this->bundlesListCardsLimit,
-            'offset' => $offset
+            'offset' => $offset,
+            'order' => $order
         ]);
 
         return $this->searchService->findLocations($query);

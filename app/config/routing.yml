@@ -36,14 +36,14 @@ _multiFileUpload:
     prefix:   "%ezpublish_rest.path_prefix%"
 
 _ezplatform_blog_ajax:
-    path: /ezplatform/blog/load/page/{page}
+    path: /ezplatform/blog/load/page/{page}/{order}
     defaults: { _controller: app.controller.blog:showBlogPostsAction }
     methods:  [GET]
     requirements:
         "page": "\d+"
 _ezplatform_bundles_list_ajax:
-    path: /ezplatform/bundles/load/page/{page}
-    defaults: { _controller: app.controller.bundle:getBundlesListAction }
+    path: /ezplatform/bundles/load/page/{page}/{order}
+    defaults: { _controller: app.controller.bundle:getBundlesListAction, page: 1, order: 'default' }
     methods: [GET]
     requirements:
         "page": "\d+"
