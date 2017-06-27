@@ -12,6 +12,7 @@ namespace AppBundle\Command;
 use eZ\Publish\API\Repository\Values\Content\Query;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class UpdateBundlesListCommand extends ContainerAwareCommand
@@ -34,7 +35,9 @@ class UpdateBundlesListCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('app:update_bundles_list');
+            ->setName('app:update_bundles_list')
+            ->setDescription('This command updates Bundle List with data gathered from Packagist.org')
+            ->addOption('force', 'f', InputOption::VALUE_NONE, false);
     }
 
     /**
@@ -58,6 +61,10 @@ class UpdateBundlesListCommand extends ContainerAwareCommand
 
         $result = $searchService->findContent($query);
 
+        if ($input->getOption('force')) {
+            $output->writeln('Force option enabled. Updating all packages.');
+        }
+
         foreach ($result->searchHits as $searchHit) {
             $currentPackage = $searchHit->valueObject;
             $package = $packagistServiceProvider->getPackageDetails($currentPackage->getFieldValue('bundle_id'));
@@ -71,7 +78,7 @@ class UpdateBundlesListCommand extends ContainerAwareCommand
                 'forks' => $package['forks'],
             ));
 
-            if ($packageChecksum !== $currentPackage->getFieldValue('checksum')->__toString()) {
+            if (($packageChecksum !== $currentPackage->getFieldValue('checksum')->__toString()) || $input->getOption('force')) {
                 $contentInfo = $contentService->loadContentInfo($searchHit->valueObject->versionInfo->contentInfo->id);
                 $contentDraft = $contentService->createContentDraft($contentInfo);
 
@@ -98,7 +105,7 @@ EOX;
                 $contentUpdateStruct->setField('description', $xmlText);
 
                 $contentDraft = $contentService->updateContent($contentDraft->versionInfo, $contentUpdateStruct);
-                $content = $contentService->publishVersion($contentDraft->versionInfo);
+                $contentService->publishVersion($contentDraft->versionInfo);
 
                 $output->writeln(': Updated');
             }

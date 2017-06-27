@@ -62,8 +62,8 @@ class PackagistServiceProvider implements PackagistServiceProviderInterface
         $packageDetails['authorAvatarUrl'] = $this->getAuthorAvatarUrl($externalData->getRepository());
         $packageDetails['description'] = $externalData->getDescription();
         $packageDetails['downloads'] = $externalData->getDownloads()->getTotal();
-        $packageDetails['forks'] = 0;
-        $packageDetails['stars'] = 0;
+        $packageDetails['forks'] = $externalData->getGithubForks();
+        $packageDetails['stars'] = $externalData->getGithubStars();
         $versions = $externalData->getVersions();
         if (is_array($versions) && !empty($versions)) {
             if (isset($versions['dev-master'])) {
