@@ -11,6 +11,7 @@
 
 namespace AppBundle\Service\Packagist;
 
+use Tedivm\StashBundle\Service\CacheService;
 use Packagist\Api\Client;
 use Guzzle\Http\Exception\CurlException;
 
@@ -19,20 +20,38 @@ class PackagistServiceProvider implements PackagistServiceProviderInterface
     const GITHUB_AVATAR_BASE_URL = "https://avatars2.githubusercontent.com/";
 
     /**
+     * @var \Tedivm\StashBundle\Service\CacheService
+     */
+    private $cache;
+    /**
      * @var \Packagist\Api\Client
      */
     private $packagistClient;
-
+    /**
+     * @var int
+     */
+    private $cacheExpirationTime;
     /**
      * @var array
      */
     private $excludedMaintainers;
 
+    /**
+     * PackagistServiceProvider constructor.
+     * @param CacheService $cacheService
+     * @param Client $packagistClient
+     * @param $cacheExpirationTime
+     * @param $excludedMaintainers
+     */
     public function __construct(
+        CacheService $cacheService,
         Client $packagistClient,
+        $cacheExpirationTime,
         $excludedMaintainers
     ) {
+        $this->cache = $cacheService;
         $this->packagistClient = $packagistClient;
+        $this->cacheExpirationTime = $cacheExpirationTime;
         $this->excludedMaintainers = $excludedMaintainers;
     }
 
@@ -44,8 +63,14 @@ class PackagistServiceProvider implements PackagistServiceProviderInterface
     {
         try {
             $packageName = trim($packageName);
-            $packageDetails = $this->callApi($packageName);
-            return $packageDetails;
+            $item = $this->cache->getItem($packageName);
+            if ($item->isMiss()) {
+                $packageDetails = $this->callApi($packageName);
+                $item->expiresAfter($this->cacheExpirationTime);
+                $this->cache->save($item->set($packageDetails));
+                return $packageDetails;
+            }
+            return $item->get();
         } catch (CurlException $curlException) {
             return [];
         }

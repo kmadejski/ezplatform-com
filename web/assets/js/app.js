@@ -20,6 +20,7 @@ $(document).ready(function(){
        var url = $(this).data('url');
        var page = $(this).data('page');
        var order = $("#order_order").val();
+       var searchText = $(this).data('searchText');
 
        if (order === undefined || order === '') {
            order = 'default';
@@ -32,7 +33,12 @@ $(document).ready(function(){
        $button.hide();
        $parent.append('<div class="button-load-more-progress"></div>').fadeIn();
 
-       url = url + '/' + page + '/' + order;
+       if (searchText !== undefined && searchText !== '') {
+           url = url + '/' + searchText + '/' + page + '/' + order;
+       }
+       else {
+           url = url + '/' + page + '/' + order;
+       }
 
         $.ajax({
             type: 'GET',
@@ -56,6 +62,13 @@ $(document).ready(function(){
     });
 
     $("#sort-order select").change(function() {
-        this.form.submit();
+        var searchText = $("#bundles-list-search-query").val();
+        if (searchText) {
+            var order  = $(this).val();
+            window.location.href = '/Bundles/search/' + searchText + '/' + order;
+        }
+        else {
+            this.form.submit();
+        }
     });
 });

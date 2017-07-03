@@ -22,6 +22,7 @@ services:
             - '@app.query_type.bundles'
             - '@app.packagist_service_provider'
             - '@form.factory'
+            - '@router.default'
             - '%bundles.location_id%'
             - '%bundles.cards_limit%'
     app.controller.tag:

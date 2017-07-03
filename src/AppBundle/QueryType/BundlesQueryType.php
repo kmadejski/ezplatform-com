@@ -31,6 +31,17 @@ class BundlesQueryType implements QueryType
             new Query\Criterion\Visibility(Query\Criterion\Visibility::VISIBLE)
         ];
 
+        if (isset($parameters['search']) && !empty($parameters['search'])) {
+            $options['query']  = new Query\Criterion\FullText($parameters['search'], [
+                'customFields' => [
+                    'bundle_id',
+                    'name',
+                    'description',
+                    'packagist_url'
+                ]
+            ]);
+        }
+
         $options['filter'] = new Query\Criterion\LogicalAnd($criteria);
 
         if (isset($parameters['order'])) {

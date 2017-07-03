@@ -47,6 +47,24 @@ _ezplatform_bundles_list_ajax:
     methods: [GET]
     requirements:
         "page": "\d+"
+        "order": "default|latestUpdate|stars|downloads"
+_ezplatform_bundles_search:
+    path: /Bundles/search/
+    defaults: { _controller: app.controller.bundle:searchBundlesAction }
+    methods: [POST]
+_ezplatform_bundles_search_order_list:
+    path: /Bundles/search/{searchText}/{order}
+    defaults: { _controller: app.controller.bundle:getOrderedSearchBundlesListAction, order: 'default' }
+    methods: [GET]
+    requirements:
+        "order": "default|latestUpdate|stars|downloads"
+_ezplatform_bundles_search_ajax:
+    path: /ezplatform/bundles/search/{searchText}/{page}/{order}
+    defaults: { _controller: app.controller.bundle:getOrderedSearchBundlesAction, page: 1, order: 'default'}
+    methods: [GET]
+    requirements:
+        "page": "\d+"
+        "order": "default|latestUpdate|stars|downloads"
 _ezplatform_tag_related_list_ajax:
     path: /ezplatform/tag/{tagId}/related/page/{page}
     defaults: { _controller: app.controller.tag:getTagRelatedContent }

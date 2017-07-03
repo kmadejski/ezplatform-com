@@ -14,9 +14,7 @@
                     <li class="downloads"><i class="fa fa-cloud-download" aria-hidden="true"></i> {{ ez_field_value(content, 'downloads') }}</li>
                     <li class="stars"><i class="fa fa-star" aria-hidden="true"></i> {{ ez_field_value(content, 'stars') }}</li>
                     <li class="forks"><i class="fa fa-code-fork" aria-hidden="true"></i> {{ ez_field_value(content, 'forks') }}</li>
-                    {% if packageDetails.updated is defined %}
-                        <li class="updated"><i class="fa fa-clock-o" aria-hidden="true"></i> {{ packageDetails.updated|date("d / m / Y") }}</li>
-                    {% endif %}
+                    <li class="updated"><i class="fa fa-clock-o" aria-hidden="true"></i> {{ ez_field_value(content, 'updated')|date("d / m / Y") }}</li>
                 </ul>
             </div>
             <div class="bundle-card-line-authors">
