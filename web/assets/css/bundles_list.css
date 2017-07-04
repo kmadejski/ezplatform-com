@@ -37,8 +37,7 @@
     color: #888;
     width: 90%;
     float: left;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding: 0 20px;
     border: 1px solid #d3d3d3;
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
@@ -57,10 +56,7 @@
     background: #f15a22;
     color: #fff;
     padding: 9px 45px 9px 45px;
-    border-top-left-radius: 0;
-    border-top-right-radius: 5px;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 5px;
+    border-radius: 0 5px 5px 0;
 }
 
 .bundles-list-search button.bundles-list-search-button:hover {
@@ -77,45 +73,6 @@
 
 .bundles-list-search button.bundles-list-add-bundle:hover {
     background: #178cb6;
-}
-
-.bundles-list-content .bundle-list-settings h2 {
-    font-size: 21px;
-    font-weight: 600;
-    color: #f15a22;
-}
-
-.bundles-list-content ul.bundle-list-settings-list {
-    margin: 0;
-    padding: 0;
-    list-style-type: none;
-}
-
-.bundles-list-content ul.bundle-list-settings-list li {
-    display: inline-block;
-    width: 100%;
-    padding: 10px 0;
-}
-
-.bundles-list-content ul.bundle-list-settings-list li a {
-    color: #63605d;
-    font-weight: 600;
-    line-height: 16px;
-}
-
-.bundles-list-content ul.bundle-list-settings-list li a:hover,
-.bundles-list-content ul.bundle-list-settings-list li.active a {
-    font-weight: 700;
-    text-decoration: none;
-}
-
-.bundles-list-content ul.bundle-list-settings-list li a:hover:after,
-.bundles-list-content ul.bundle-list-settings-list li.active a:after {
-    content: '\f105';
-    font-family: FontAwesome;
-    font-weight: 700;
-    font-size: 16px;
-    padding-left: 10px;
 }
 
 .bundles-list-container h2 {
@@ -137,7 +94,7 @@
     }
 
     .bundles-list-search button.bundles-list-search-button {
-        padding: 9px 0px 9px 0px;
+        padding: 9px 0;
         width: 100%;
     }
 
@@ -148,6 +105,6 @@
         height: 40px;
         line-height: 41px;
         margin: 0;
-        padding: 0 17px 0 17px;
+        padding: 0 17px;
     }
 }

@@ -30,23 +30,14 @@
         </div>
         <div class="bundles-list-content">
             <div class="container">
-                <div class="hidden-xs hidden-sm col-md-2 bundle-list-settings">
-                    <h2>Categories</h2>
-                    <ul class="bundle-list-settings-list">
-                        <li class="active"><a href="#">All Bundles</a></li>
-                        <li><a href="#">Content Type</a></li>
-                        <li><a href="#">Field Type</a></li>
-                        <li><a href="#">Theme</a></li>
-                        <li><a href="#">Social</a></li>
-                        <li><a href="#">e-Commerce</a></li>
-                        <li><a href="#">Administration</a></li>
-                        <li><a href="#">Workflow</a></li>
-                    </ul>
-                </div>
-                <div class="col-xs-12 col-md-10 bundles-list-container">
+                <div class="col-xs-12 bundles-list-container">
                     <div class="row">
                         <div class="col-xs-12 col-md-9">
-                            <h2>All Bundles</h2>
+                            {% if search is defined and search is not empty %}
+                                <h2>Search / Keyword: {{ search }}</h2>
+                            {% else %}
+                                <h2>All Bundles</h2>
+                            {% endif %}
                         </div>
                         <div class="col-xs-12 col-md-3 sort-container">
                             {{ form_start(sortingForm) }}

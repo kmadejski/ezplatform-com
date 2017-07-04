@@ -119,7 +119,7 @@
 }
 
 .bundle-card-line-owner-photo {
-    margin: 0 10px 0 10px;
+    margin: 0 10px;
 }
 
 .bundle-card-line-owner-photo img,
@@ -221,11 +221,11 @@
     }
 
     .bundle-card-line-maintainers {
-        padding-right: 0px;
+        padding-right: 0;
     }
 
     .bundle-card-line-maintainer {
-        margin: 0 5px 0 5px;
+        margin: 0 5px;
     }
 
     .bundle-card-line-maintainer:first-of-type {

@@ -110,9 +110,9 @@ EOX;
                 $output->writeln(': Updated');
             }
             else {
-                $output->writeln(': OK');
+                $output->writeln(': Already up-to-date');
             }
         }
-        $output->writeln("All bundles has been successfully updated.");
+        $output->writeln("The bundles have been successfully updated.");
     }
 }

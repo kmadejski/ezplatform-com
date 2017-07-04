@@ -27,7 +27,7 @@ class OrderType extends AbstractType
                 'placeholder' => 'Sort by',
                 'choices' => array(
                     'latestUpdate' => 'Latest Update',
-                    'stars' => 'Stars',
+                    'stars' => 'Popularity',
                     'downloads' => 'Downloads'
                 ),
                 'label' => false,

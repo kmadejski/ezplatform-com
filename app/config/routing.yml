@@ -34,7 +34,6 @@ _contentOnTheFly:
 _multiFileUpload:
     resource: "@EzSystemsMultiFileUploadBundle/Resources/config/routing.yml"
     prefix:   "%ezpublish_rest.path_prefix%"
-
 _ezplatform_blog_ajax:
     path: /ezplatform/blog/load/page/{page}/{order}
     defaults: { _controller: app.controller.blog:showBlogPostsAction }
