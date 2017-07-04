@@ -77,6 +77,6 @@ _ezplatform_tag_related_list_ajax:
     requirements:
         "tagId": "\d+"
         "page": "\d+"
-        
+
 _eztagsRoutes:
     resource: "@NetgenTagsBundle/Resources/config/routing.yml"

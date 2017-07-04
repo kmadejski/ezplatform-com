@@ -10,6 +10,8 @@
 namespace AppBundle\Command;
 
 use eZ\Publish\API\Repository\Values\Content\Query;
+use eZ\Publish\Core\SignalSlot\ContentService;
+use eZ\Publish\Core\SignalSlot\Repository;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -17,18 +19,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class UpdateBundlesListCommand extends ContainerAwareCommand
 {
-    /**
-     * @param array $fields
-     * @return string
-     */
-    private function calculateChecksum(array $fields = array()) {
-        $string = '';
-        foreach ($fields as $field) {
-            $string += $field;
-        }
-        return md5($string);
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -45,52 +35,74 @@ class UpdateBundlesListCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $repository = $this->getContainer()->get('ezpublish.api.repository');
-        $packagistServiceProvider = $this->getContainer()->get('app.packagist_service_provider');
-        $userService = $repository->getUserService();
-        $searchService = $repository->getSearchService();
-        $contentService = $repository->getContentService();
-        $permissionResolver = $repository->getPermissionResolver();
-
-        $user = $userService->loadUserByLogin('admin');
-        $permissionResolver->setCurrentUserReference($user);
-
-        $query = new Query();
-        $criterion = new Query\Criterion\ParentLocationId($this->getContainer()->getParameter('bundles.location_id'));
-        $query->filter = $criterion;
-
-        $result = $searchService->findContent($query);
-
         if ($input->getOption('force')) {
             $output->writeln('Force option enabled. Updating all packages.');
         }
 
-        foreach ($result->searchHits as $searchHit) {
+        $repository = $this->getContainer()->get('ezpublish.api.repository');
+        $packagistServiceProvider = $this->getContainer()->get('app.packagist_service_provider');
+        $contentService = $repository->getContentService();
+
+        $query = $this->getQuery();
+
+        $results = $repository->sudo(
+            function (Repository $repository) use ($query) {
+                return $repository->getSearchService()->findContent($query);
+            }, $repository
+        );
+
+        foreach ($results->searchHits as $searchHit) {
             $currentPackage = $searchHit->valueObject;
-            $package = $packagistServiceProvider->getPackageDetails($currentPackage->getFieldValue('bundle_id'));
+            $package = $packagistServiceProvider->getPackageDetails($currentPackage->getFieldValue('bundle_id'), $input->getOption('force'));
             $output->write($currentPackage->getFieldValue('bundle_id'));
 
-            $packageChecksum = $this->calculateChecksum(array(
-                'updated' => (int) $package['updated']->format('U'),
-                'description' => $package['description'],
-                'downloads' => $package['downloads'],
-                'stars' => $package['stars'],
-                'forks' => $package['forks'],
-            ));
+            if (($package['checksum'] !== $currentPackage->getFieldValue('checksum')->__toString()) || $input->getOption('force')) {
+                $contentUpdateStruct = $this->getContentUpdateStruct($contentService, $package);
 
-            if (($packageChecksum !== $currentPackage->getFieldValue('checksum')->__toString()) || $input->getOption('force')) {
-                $contentInfo = $contentService->loadContentInfo($searchHit->valueObject->versionInfo->contentInfo->id);
-                $contentDraft = $contentService->createContentDraft($contentInfo);
+                $contentId = $searchHit->valueObject->versionInfo->contentInfo->id;
+                $repository->sudo(
+                    function () use ($contentService, $contentId, $contentUpdateStruct) {
+                        $contentInfo = $contentService->loadContentInfo($contentId);
+                        $contentDraft = $contentService->createContentDraft($contentInfo);
+                        $contentDraft = $contentService->updateContent($contentDraft->versionInfo, $contentUpdateStruct);
+                        $contentService->publishVersion($contentDraft->versionInfo);
+                    }, $repository
+                );
 
-                $contentUpdateStruct = $contentService->newContentUpdateStruct();
-                $contentUpdateStruct->initialLanguageCode = 'eng-GB';
-                $contentUpdateStruct->setField('updated', (int) $package['updated']->format('U'));
-                $contentUpdateStruct->setField('downloads', $package['downloads']);
-                $contentUpdateStruct->setField('stars', $package['stars']);
-                $contentUpdateStruct->setField('forks', $package['forks']);
-                $contentUpdateStruct->setField('checksum', $packageChecksum);
+                $output->writeln(': Updated');
+            }
+            else {
+                $output->writeln(': Already up-to-date');
+            }
+        }
+        $output->writeln("The bundles have been successfully updated.");
+    }
 
-$xmlText = <<< EOX
+    /**
+     * @return \eZ\Publish\API\Repository\Values\Content\Query
+     */
+    private function getQuery() {
+        $query = new Query();
+        $criterion = new Query\Criterion\ParentLocationId($this->getContainer()->getParameter('bundles.location_id'));
+        $query->filter = $criterion;
+        return $query;
+    }
+
+    /**
+     * @param ContentService $contentService
+     * @param array $package
+     * @return \eZ\Publish\API\Repository\Values\Content\ContentUpdateStruct
+     */
+    private function getContentUpdateStruct(ContentService $contentService, $package) {
+        $contentUpdateStruct = $contentService->newContentUpdateStruct();
+        $contentUpdateStruct->initialLanguageCode = 'eng-GB';
+        $contentUpdateStruct->setField('updated', (int) $package['updated']->format('U'));
+        $contentUpdateStruct->setField('downloads', $package['downloads']);
+        $contentUpdateStruct->setField('stars', $package['stars']);
+        $contentUpdateStruct->setField('forks', $package['forks']);
+        $contentUpdateStruct->setField('checksum', $package['checksum']);
+
+        $xmlText = <<< EOX
 <?xml version='1.0' encoding='utf-8'?>
 <section 
     xmlns="http://docbook.org/ns/docbook" 
@@ -101,18 +113,8 @@ $xmlText = <<< EOX
 <para>{$package['description']}</para>
 </section>
 EOX;
+        $contentUpdateStruct->setField('description', $xmlText);
 
-                $contentUpdateStruct->setField('description', $xmlText);
-
-                $contentDraft = $contentService->updateContent($contentDraft->versionInfo, $contentUpdateStruct);
-                $contentService->publishVersion($contentDraft->versionInfo);
-
-                $output->writeln(': Updated');
-            }
-            else {
-                $output->writeln(': Already up-to-date');
-            }
-        }
-        $output->writeln("The bundles have been successfully updated.");
+        return $contentUpdateStruct;
     }
 }

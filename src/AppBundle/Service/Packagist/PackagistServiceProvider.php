@@ -56,15 +56,16 @@ class PackagistServiceProvider implements PackagistServiceProviderInterface
     }
 
     /**
-     * @param $packageName
+     * @param string $packageName
+     * @param bool $force
      * @return array
      */
-    public function getPackageDetails($packageName)
+    public function getPackageDetails($packageName, $force = false)
     {
         try {
             $packageName = trim($packageName);
             $item = $this->cache->getItem($packageName);
-            if ($item->isMiss()) {
+            if ($item->isMiss() || $force) {
                 $packageDetails = $this->callApi($packageName);
                 $item->expiresAfter($this->cacheExpirationTime);
                 $this->cache->save($item->set($packageDetails));
@@ -99,6 +100,13 @@ class PackagistServiceProvider implements PackagistServiceProviderInterface
             $packageDetails['updated'] = \DateTime::createFromFormat(\DateTime::ISO8601, $versions[$version]->getTime());
             $packageDetails['author'] = $versions[$version]->getAuthors();
         }
+        $packageDetails['checksum'] = $this->calculateChecksum(array(
+            'updated' => (int) $packageDetails['updated']->format('U'),
+            'description' => $packageDetails['description'],
+            'downloads' => $packageDetails['downloads'],
+            'stars' => $packageDetails['stars'],
+            'forks' => $packageDetails['forks'],
+        ));
         return $packageDetails;
     }
 
@@ -127,5 +135,17 @@ class PackagistServiceProvider implements PackagistServiceProviderInterface
             }
         }
         return $maintainers;
+    }
+
+    /**
+     * @param array $fields
+     * @return string
+     */
+    private function calculateChecksum(array $fields = array()) {
+        $string = '';
+        foreach ($fields as $field) {
+            $string += $field;
+        }
+        return md5($string);
     }
 }
