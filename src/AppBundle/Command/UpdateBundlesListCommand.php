@@ -9,8 +9,8 @@
 
 namespace AppBundle\Command;
 
+use eZ\Publish\API\Repository\ContentService;
 use eZ\Publish\API\Repository\Values\Content\Query;
-use eZ\Publish\Core\SignalSlot\ContentService;
 use eZ\Publish\Core\SignalSlot\Repository;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -89,7 +89,7 @@ class UpdateBundlesListCommand extends ContainerAwareCommand
     }
 
     /**
-     * @param ContentService $contentService
+     * @param \eZ\Publish\API\Repository\ContentService $contentService
      * @param array $package
      * @return \eZ\Publish\API\Repository\Values\Content\ContentUpdateStruct
      */
