@@ -17,7 +17,7 @@
     font-weight: 600;
 }
 
-.bundles-list-header h2 {
+.bundles-list-header .description {
     font-size: 23px;
     font-weight: 600;
 }
