@@ -23,13 +23,13 @@
     padding: 0 45px 0 20px;
 }
 
-.bundle-card-line-information h1 {
+.bundle-card-line-information h2 {
     font-size: 26px;
     color: #63605d;
     font-weight: 400;
 }
 
-.bundle-card-line-information h1 a {
+.bundle-card-line-information h2 a {
     color: #63605d;
     text-decoration: none;
     cursor: pointer;
