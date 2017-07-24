@@ -92,3 +92,4 @@ class BundlesQueryType implements QueryType
         return 'AppBundle:Bundles';
     }
 }
+
