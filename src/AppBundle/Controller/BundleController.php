@@ -275,7 +275,7 @@ class BundleController
     /**
      * Returns list of bundles with package details for given $searchResult set.
      *
-     * @param $searchResults
+     * @param \eZ\Publish\API\Repository\Values\Content\Search\SearchResult $searchResults
      * @return array
      */
     private function getList($searchResults)
