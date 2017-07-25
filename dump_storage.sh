@@ -41,7 +41,7 @@ mkdir ${TMP_WORKING_DIR}/${PACKAGES_PATH}
 
 cd ${SOURCE_PATH}/${PACKAGES_PATH}
 echo "Creating text file."
-echo "Please download archive from http://ezplatform.com" > README.txt
+echo "Please download archive from http://ezplatform.com" > ${README_FILE}
 
 echo "Creating archives."
 for archive in ${ARCHIVE_EXTENSIONS}
