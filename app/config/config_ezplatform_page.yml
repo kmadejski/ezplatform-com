@@ -29,6 +29,8 @@ parameters:
     eztags.default.tag_view.pagelayout: 'pagelayout.html.twig'
     # overwrites default tag related content limit
     eztags.default.tag_view.related_content_list.limit: 10
+    # community metrics content ID
+    community_metrics.content_id: 184
 
     # default png compression level used in image_variations.yml
     images.default_png_compression_level: 9
@@ -83,6 +85,7 @@ assetic:
                 - 'assets/css/bundles_list.css'
                 - 'assets/css/bundle.css'
                 - 'assets/css/tags.css'
+                - 'assets/css/iframe.css'
         js_prism:
             inputs:
                 - 'assets/js/prism.js'
