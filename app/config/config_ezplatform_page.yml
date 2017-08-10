@@ -30,7 +30,7 @@ parameters:
     # overwrites default tag related content limit
     eztags.default.tag_view.related_content_list.limit: 10
     # community metrics content ID
-    community_metrics.content_id: 184
+    community_metrics.content_id: 222
 
     # default png compression level used in image_variations.yml
     images.default_png_compression_level: 9
