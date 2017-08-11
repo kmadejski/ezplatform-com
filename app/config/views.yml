@@ -48,7 +48,7 @@ ezpublish:
                     community_metrics:
                         template: "@ezdesign/full/community_metrics.html.twig"
                         match:
-                            Id\Content: '%community_metrics.content_id%'
+                            Id\Location: '%community_metrics.location_id%'
                     article:
                         template: "@ezdesign/full/article.html.twig"
                         match:
