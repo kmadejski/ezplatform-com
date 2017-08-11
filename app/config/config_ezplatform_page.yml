@@ -30,7 +30,7 @@ parameters:
     # overwrites default tag related content limit
     eztags.default.tag_view.related_content_list.limit: 10
     # community metrics location ID
-    community_metrics.location_id: 222
+    community_metrics.location_id: 218
     # community metrics decoded iframe URL
     community_metrics.iframe_url: 'https://communitymetrics.ez.no/app/kibana#/dashboard/e8dca940-7d3a-11e7-a3ec-639c36c57655?embed=true&_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-1y,mode:quick,to:now))'
 
