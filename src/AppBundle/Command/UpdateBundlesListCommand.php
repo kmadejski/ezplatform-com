@@ -12,7 +12,6 @@ namespace AppBundle\Command;
 use eZ\Publish\API\Repository\ContentService;
 use eZ\Publish\API\Repository\Exceptions\PropertyNotFoundException;
 use eZ\Publish\API\Repository\Values\Content\Query;
-use eZ\Publish\API\Repository\Values\Content\Search\SearchHit;
 use eZ\Publish\API\Repository\Values\ValueObject;
 use eZ\Publish\Core\SignalSlot\Repository;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -144,7 +143,7 @@ EOX;
     {
         $diff = [];
         foreach ($package as $key => $value) {
-            if (in_array($key, ['description'])) {
+            if ($key == 'description') {
                 continue;
             }
             if ($key == 'updated') {
