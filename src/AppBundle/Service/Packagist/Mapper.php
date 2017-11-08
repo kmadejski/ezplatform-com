@@ -110,7 +110,7 @@ class Mapper
 
     /**
      * @param PackagistApiPackage $packagistApiPackage
-     * @return mixed
+     * @return PackagistApiPackage\Author
      */
     private function getAuthor(PackagistApiPackage $packagistApiPackage)
     {

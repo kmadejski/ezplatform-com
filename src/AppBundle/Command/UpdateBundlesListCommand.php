@@ -69,7 +69,7 @@ class UpdateBundlesListCommand extends ContainerAwareCommand
                     $table->setRows($this->getDiff($currentPackage, $package));
                     $table->render();
                 } else {
-                    $output->writeln(': <info>Force updated.</info>');
+                    $output->writeln(': <info>Updated.</info>');
                 }
 
                 $contentUpdateStruct = $this->getContentUpdateStruct($contentService, $package);
