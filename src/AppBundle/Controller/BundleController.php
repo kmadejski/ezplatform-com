@@ -7,12 +7,15 @@ use AppBundle\Form\SearchType;
 use AppBundle\QueryType\BundlesQueryType;
 use AppBundle\Service\Packagist\PackagistServiceProviderInterface;
 use eZ\Bundle\EzPublishCoreBundle\Routing\DefaultRouter;
+use eZ\Bundle\EzPublishCoreBundle\Routing\UrlAliasRouter;
+use eZ\Publish\API\Repository\LocationService;
 use eZ\Publish\API\Repository\SearchService;
 use eZ\Publish\API\Repository\Values\Content\Query;
 use eZ\Publish\API\Repository\Values\Content\Search\SearchResult;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -27,6 +30,16 @@ class BundleController
      * @var \eZ\Publish\API\Repository\SearchService
      */
     private $searchService;
+
+    /**
+     * @var \eZ\Publish\API\Repository\LocationService
+     */
+    private $locationService;
+
+    /**
+     * @var \eZ\Bundle\EzPublishCoreBundle\Routing\UrlAliasRouter
+     */
+    private $aliasRouter;
 
     /**
      * @var \AppBundle\QueryType\BundlesQueryType
@@ -62,6 +75,8 @@ class BundleController
      * BundleController constructor.
      * @param EngineInterface $templating
      * @param SearchService $searchService
+     * @param LocationService $locationService
+     * @param UrlAliasRouter $aliasRouter
      * @param BundlesQueryType $bundlesQueryType
      * @param PackagistServiceProviderInterface $packagistServiceProvider
      * @param FormFactory $formFactory
@@ -72,6 +87,8 @@ class BundleController
     public function __construct(
         EngineInterface $templating,
         SearchService $searchService,
+        LocationService $locationService,
+        UrlAliasRouter $aliasRouter,
         BundlesQueryType $bundlesQueryType,
         PackagistServiceProviderInterface $packagistServiceProvider,
         FormFactory $formFactory,
@@ -81,6 +98,8 @@ class BundleController
     ) {
         $this->templating = $templating;
         $this->searchService = $searchService;
+        $this->locationService = $locationService;
+        $this->aliasRouter = $aliasRouter;
         $this->bundlesQueryType = $bundlesQueryType;
         $this->packagistServiceProvider = $packagistServiceProvider;
         $this->formFactory = $formFactory;
@@ -97,14 +116,13 @@ class BundleController
      */
     public function showBundlesListAction(Request $request)
     {
-        $sortingForm = $this->formFactory->create(OrderType::class);
-        $searchForm = $this->formFactory->create(SearchType::class);
+        $orderForm = $this->formFactory->create(OrderType::class);
 
         $order = 'default';
 
-        $sortingForm->handleRequest($request);
-        if ($sortingForm->isSubmitted() && $sortingForm->isValid()) {
-            $order = $sortingForm->get('order')->getData();
+        $orderForm->handleRequest($request);
+        if ($orderForm->isSubmitted() && $orderForm->isValid()) {
+            $order = $orderForm->get('order')->getData();
         }
 
         $searchResults = $this->getLocations(0, $order);
@@ -123,8 +141,7 @@ class BundleController
                 'totalCount' => $searchResults->totalCount,
                 'page' => 1,
             ],
-            'sortingForm' => $sortingForm->createView(),
-            'searchForm' => $searchForm->createView()
+            'order' => $order,
         ]);
     }
 
@@ -166,18 +183,18 @@ class BundleController
      */
     public function searchBundlesAction(Request $request)
     {
-        $searchText = '';
-
         $searchForm = $this->formFactory->create(SearchType::class);
         $searchForm->handleRequest($request);
 
-        if ($searchForm->isSubmitted() && $searchForm->isValid()) {
-            $searchText = $searchForm->get('search')->getData();
+        if (!$searchForm->isSubmitted() && !$searchForm->isValid()) {
+            $location = $this->locationService->loadLocation($this->bundlesListLocationId);
+            return new RedirectResponse($this->aliasRouter->generate($location, [], UrlGeneratorInterface::ABSOLUTE_PATH));
         }
+        $searchText = $searchForm->get('search')->getData();
 
         return new RedirectResponse($this->router->generate('_ezplatform_bundles_search_order_list', [
             'searchText' => $searchText,
-            'order' => 'default'
+            'order' => 'default',
         ]));
     }
 
@@ -190,13 +207,6 @@ class BundleController
      */
     public function getOrderedSearchBundlesListAction($searchText, $order = null)
     {
-        $sortingForm = $this->formFactory->create(OrderType::class, [
-            'order' => $order
-        ]);
-        $searchForm = $this->formFactory->create(SearchType::class, [
-            'search' => $searchText
-        ]);
-
         $searchResults = $searchResults = $this->getLocations(0, $order, $searchText);
         $query = new Query();
         $criterion = new Query\Criterion\LocationId($this->bundlesListLocationId);
@@ -214,8 +224,7 @@ class BundleController
                 'page' => 1,
             ],
             'search' => $searchText,
-            'sortingForm' => $sortingForm->createView(),
-            'searchForm' => $searchForm->createView()
+            'order' => $order,
         ]);
     }
 
@@ -240,7 +249,8 @@ class BundleController
                 'totalCount' => $searchResults->totalCount,
                 'page' => $page,
             ],
-            'search' => $searchText
+            'search' => $searchText,
+            'order' => $order,
         ]);
 
         $showMoreButton = $searchResults->totalCount > ($offset + count($searchResults->searchHits)) ? true : false;
@@ -249,6 +259,42 @@ class BundleController
             'html' => $renderedContent,
             'showLoadMoreButton' => $showMoreButton,
         ]);
+    }
+
+    /**
+     * @param string $order
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function renderOrderForm($order)
+    {
+        $sortingForm = $this->formFactory->create(OrderType::class, [
+            'order' => $order,
+        ]);
+
+        return $this->templating->renderResponse(
+            '@ezdesign/form/order.html.twig',
+            [
+                'orderForm' => $sortingForm->createView(),
+            ]
+        );
+    }
+
+    /**
+     * @param string $searchText
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function renderSearchForm($searchText)
+    {
+        $searchForm = $this->formFactory->create(SearchType::class, [
+            'search' => $searchText,
+        ]);
+
+        return $this->templating->renderResponse(
+            '@ezdesign/form/search.html.twig',
+            [
+                'searchForm' => $searchForm->createView(),
+            ]
+        );
     }
 
     /**
@@ -266,7 +312,7 @@ class BundleController
             'limit' => $this->bundlesListCardsLimit,
             'offset' => $offset,
             'order' => $order,
-            'search' => $searchText
+            'search' => $searchText,
         ]);
 
         return $this->searchService->findLocations($query);
@@ -284,7 +330,7 @@ class BundleController
         foreach ($searchResults->searchHits as $searchHit) {
             $bundles[] = [
                 'bundle' => $searchHit,
-                'packageDetails' => $this->packagistServiceProvider->getPackageDetails($searchHit->valueObject->contentInfo->name)
+                'packageDetails' => $this->packagistServiceProvider->getPackageDetails($searchHit->valueObject->contentInfo->name),
             ];
         }
 

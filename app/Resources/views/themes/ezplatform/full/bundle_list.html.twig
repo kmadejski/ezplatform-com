@@ -14,16 +14,12 @@
         <div class="bundles-list-search">
             <div class="container">
                 <div class="col-xs-12">
-                    {{ form_start(searchForm) }}
-                        <div class="form-group">
-                            {{ form_widget(searchForm.search, { 'id': 'bundles-list-search-query'} )}}
-                            <div class="input-group-addon">
-                                <button type="submit" class="btn bundles-list-search-button">
-                                    <i class="fa fa-search" aria-hidden="true"></i>
-                                </button>
-                            </div>
-                        </div>
-                    {{ form_end(searchForm) }}
+                    {% if search is defined %}
+                        {% set searchText = search %}
+                    {% else %}
+                        {% set searchText = '' %}
+                    {% endif %}
+                    {{ render_esi(controller('app.controller.bundle:renderSearchForm', {"searchText": searchText})) }}
                 </div>
             </div>
         </div>
@@ -39,11 +35,12 @@
                             {% endif %}
                         </div>
                         <div class="col-xs-12 col-md-3 sort-container">
-                            {{ form_start(sortingForm) }}
-                                <div class="form-group {% if not sortingForm.order.vars.valid %}has-error{% endif %}">
-                                    {{  form_row(sortingForm.order) }}
-                                </div>
-                            {{ form_end(sortingForm) }}
+                            {% if order is defined %}
+                                {% set sortingOrder = order %}
+                            {% else %}
+                                {% set sortingOrder = 'default' %}
+                            {% endif %}
+                            {{ render_esi(controller('app.controller.bundle:renderOrderForm', {"order": sortingOrder})) }}
                         </div>
                     </div>
                 {% include '@ezdesign/parts/bundle_list/list.html.twig' with {

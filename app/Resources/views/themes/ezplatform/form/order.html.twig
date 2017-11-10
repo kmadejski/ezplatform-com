@@ -1,0 +1,5 @@
+{{ form_start(orderForm) }}
+    <div class="form-group {% if not orderForm.order.vars.valid %}has-error{% endif %}">
+        {{  form_row(orderForm.order) }}
+    </div>
+{{ form_end(orderForm) }}
