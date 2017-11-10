@@ -19,7 +19,7 @@
                     {% else %}
                         {% set searchText = '' %}
                     {% endif %}
-                    {{ render_esi(controller('app.controller.bundle:renderSearchForm', {"searchText": searchText})) }}
+                    {{ render_esi(controller('app.controller.bundle:renderSearchBundleForm', {"searchText": searchText})) }}
                 </div>
             </div>
         </div>
@@ -40,7 +40,7 @@
                             {% else %}
                                 {% set sortingOrder = 'default' %}
                             {% endif %}
-                            {{ render_esi(controller('app.controller.bundle:renderOrderForm', {"order": sortingOrder})) }}
+                            {{ render_esi(controller('app.controller.bundle:renderSortOrderBundleForm', {"order": sortingOrder})) }}
                         </div>
                     </div>
                 {% include '@ezdesign/parts/bundle_list/list.html.twig' with {

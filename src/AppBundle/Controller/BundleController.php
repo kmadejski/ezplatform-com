@@ -2,8 +2,8 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Form\OrderType;
-use AppBundle\Form\SearchType;
+use AppBundle\Form\BundleOrderType;
+use AppBundle\Form\BundleSearchType;
 use AppBundle\QueryType\BundlesQueryType;
 use AppBundle\Service\Packagist\PackagistServiceProviderInterface;
 use eZ\Bundle\EzPublishCoreBundle\Routing\DefaultRouter;
@@ -116,7 +116,7 @@ class BundleController
      */
     public function showBundlesListAction(Request $request)
     {
-        $orderForm = $this->formFactory->create(OrderType::class);
+        $orderForm = $this->formFactory->create(BundleOrderType::class);
 
         $order = 'default';
 
@@ -183,7 +183,7 @@ class BundleController
      */
     public function searchBundlesAction(Request $request)
     {
-        $searchForm = $this->formFactory->create(SearchType::class);
+        $searchForm = $this->formFactory->create(BundleSearchType::class);
         $searchForm->handleRequest($request);
 
         if (!$searchForm->isSubmitted() || !$searchForm->isValid()) {
@@ -265,16 +265,16 @@ class BundleController
      * @param string $order
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function renderOrderForm($order)
+    public function renderSortOrderBundleForm($order)
     {
-        $sortingForm = $this->formFactory->create(OrderType::class, [
+        $sortOrderBundleForm = $this->formFactory->create(BundleOrderType::class, [
             'order' => $order,
         ]);
 
         return $this->templating->renderResponse(
-            '@ezdesign/form/order.html.twig',
+            '@ezdesign/form/bundle_sort_order.html.twig',
             [
-                'orderForm' => $sortingForm->createView(),
+                'sortOrderBundleForm' => $sortOrderBundleForm->createView(),
             ]
         );
     }
@@ -283,16 +283,16 @@ class BundleController
      * @param string $searchText
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function renderSearchForm($searchText)
+    public function renderSearchBundleForm($searchText)
     {
-        $searchForm = $this->formFactory->create(SearchType::class, [
+        $searchBundleForm = $this->formFactory->create(BundleSearchType::class, [
             'search' => $searchText,
         ]);
 
         return $this->templating->renderResponse(
-            '@ezdesign/form/search.html.twig',
+            '@ezdesign/form/bundle_search.html.twig',
             [
-                'searchForm' => $searchForm->createView(),
+                'searchBundleForm' => $searchBundleForm->createView(),
             ]
         );
     }
