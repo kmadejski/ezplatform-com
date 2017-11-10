@@ -186,7 +186,7 @@ class BundleController
         $searchForm = $this->formFactory->create(SearchType::class);
         $searchForm->handleRequest($request);
 
-        if (!$searchForm->isSubmitted() && !$searchForm->isValid()) {
+        if (!$searchForm->isSubmitted() || !$searchForm->isValid()) {
             $location = $this->locationService->loadLocation($this->bundlesListLocationId);
             return new RedirectResponse($this->aliasRouter->generate($location, [], UrlGeneratorInterface::ABSOLUTE_PATH));
         }
