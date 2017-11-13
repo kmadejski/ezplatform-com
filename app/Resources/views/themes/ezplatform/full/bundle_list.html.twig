@@ -14,11 +14,7 @@
         <div class="bundles-list-search">
             <div class="container">
                 <div class="col-xs-12">
-                    {% if search is defined %}
-                        {% set searchText = search %}
-                    {% else %}
-                        {% set searchText = '' %}
-                    {% endif %}
+                    {% set searchText = search is defined ? search : '' %}
                     {{ render_esi(controller('app.controller.bundle:renderSearchBundleForm', {"searchText": searchText})) }}
                 </div>
             </div>
@@ -35,11 +31,7 @@
                             {% endif %}
                         </div>
                         <div class="col-xs-12 col-md-3 sort-container">
-                            {% if order is defined %}
-                                {% set sortingOrder = order %}
-                            {% else %}
-                                {% set sortingOrder = 'default' %}
-                            {% endif %}
+                            {% set sortingOrder = order is defined ? order : 'default' %}
                             {{ render_esi(controller('app.controller.bundle:renderSortOrderBundleForm', {"order": sortingOrder})) }}
                         </div>
                     </div>

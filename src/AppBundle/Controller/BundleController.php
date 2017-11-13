@@ -32,11 +32,6 @@ class BundleController
     private $searchService;
 
     /**
-     * @var \eZ\Publish\API\Repository\LocationService
-     */
-    private $locationService;
-
-    /**
      * @var \eZ\Bundle\EzPublishCoreBundle\Routing\UrlAliasRouter
      */
     private $aliasRouter;
@@ -75,7 +70,6 @@ class BundleController
      * BundleController constructor.
      * @param EngineInterface $templating
      * @param SearchService $searchService
-     * @param LocationService $locationService
      * @param UrlAliasRouter $aliasRouter
      * @param BundlesQueryType $bundlesQueryType
      * @param PackagistServiceProviderInterface $packagistServiceProvider
@@ -87,7 +81,6 @@ class BundleController
     public function __construct(
         EngineInterface $templating,
         SearchService $searchService,
-        LocationService $locationService,
         UrlAliasRouter $aliasRouter,
         BundlesQueryType $bundlesQueryType,
         PackagistServiceProviderInterface $packagistServiceProvider,
@@ -98,7 +91,6 @@ class BundleController
     ) {
         $this->templating = $templating;
         $this->searchService = $searchService;
-        $this->locationService = $locationService;
         $this->aliasRouter = $aliasRouter;
         $this->bundlesQueryType = $bundlesQueryType;
         $this->packagistServiceProvider = $packagistServiceProvider;
@@ -186,9 +178,9 @@ class BundleController
         $searchForm = $this->formFactory->create(BundleSearchType::class);
         $searchForm->handleRequest($request);
 
-        if (!$searchForm->isSubmitted() || !$searchForm->isValid()) {
-            $location = $this->locationService->loadLocation($this->bundlesListLocationId);
-            return new RedirectResponse($this->aliasRouter->generate($location, [], UrlGeneratorInterface::ABSOLUTE_PATH));
+        if ( !$searchForm->isSubmitted() || !$searchForm->isValid()) {
+            return new RedirectResponse($this->aliasRouter->generate('ez_urlalias',
+                ['locationId' => $this->bundlesListLocationId], UrlGeneratorInterface::ABSOLUTE_PATH));
         }
         $searchText = $searchForm->get('search')->getData();
 
@@ -276,7 +268,7 @@ class BundleController
             [
                 'sortOrderBundleForm' => $sortOrderBundleForm->createView(),
             ]
-        );
+        )->setPrivate();
     }
 
     /**
@@ -294,7 +286,7 @@ class BundleController
             [
                 'searchBundleForm' => $searchBundleForm->createView(),
             ]
-        );
+        )->setPrivate();
     }
 
     /**
