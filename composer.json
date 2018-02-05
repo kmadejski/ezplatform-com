@@ -10,9 +10,6 @@
             "homepage": "https://github.com/ezsystems/ezplatform/contributors"
         }
     ],
-    "repositories": [
-        { "type": "vcs", "url": "https://github.com/kmadejski/packagist-api.git" }
-    ],
     "replace": {
         "ezsystems/ezpublish-community": "*"
     },
